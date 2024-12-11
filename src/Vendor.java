@@ -11,22 +11,19 @@ public class Vendor implements Runnable {
         this.ticketSystem = ticketSystem;
     }
 
-    public void stop() {
-        running = false;
-    }
     @Override
     public void run() {
-        while (running) {
-            if (!ticketSystem.isPaused()) { // Only add tickets if not paused
+        while (running && !Thread.currentThread().isInterrupted()) {
+            if (!ticketSystem.isPaused()) {
                 ticketPool.addTickets(releaseRate);
             }
             try {
-                Thread.sleep(1000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
-                System.out.println("Vendor thread interrupted....");
+                Thread.currentThread().interrupt();
                 break;
             }
         }
-        System.out.println("Vendor thread stopped.");
+        Logger.log("Vendor thread stopped.");
     }
 }
